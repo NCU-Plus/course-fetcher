@@ -3,6 +3,7 @@ import xml2js from 'xml2js';
 import cheerio from 'cheerio';
 import {
   CourseBaseData,
+  CourseExtraData,
   preprocessCourseBase,
   preprocessCourseExtra,
   ProcessedCourseExtraData,
@@ -76,8 +77,10 @@ export async function fetchCourseBases(
   );
 }
 
-export async function fetchAllCourseExtras() {
-  const result: ProcessedCourseExtraData[] = [];
+export async function fetchAllCourseExtras(): Promise<
+  ProcessedCourseExtraData[]
+> {
+  const result: CourseExtraData[] = [];
 
   for (let pageNo = 1; true; pageNo++) {
     const response = await axios.get(

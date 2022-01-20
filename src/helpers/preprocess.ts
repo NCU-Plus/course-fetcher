@@ -34,7 +34,7 @@ export interface ProcessedCourseBaseData {
 }
 
 export interface ProcessedCourseExtraData {
-  serialNo: string;
+  serialNo: number;
   courseType: string;
 }
 
@@ -66,7 +66,7 @@ export function preprocessCourseExtra(
   $: CourseExtraData,
 ): ProcessedCourseExtraData {
   return {
-    serialNo: $.serialNo,
+    serialNo: Number($.serialNo),
     courseType: normalizeCourseType($.courseType),
   };
 }
