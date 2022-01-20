@@ -11,6 +11,8 @@ import {
   ProcessedCourseBaseData,
   ProcessedCourseExtraData,
 } from '../helpers/preprocess';
+import * as department from './models/Department';
+import * as college from './models/College';
 
 export interface DatabaseConfig {
   host: string;
@@ -20,10 +22,10 @@ export interface DatabaseConfig {
 }
 
 export class CourseDB {
-  private readonly db: Sequelize;
+  public readonly sequelize: Sequelize;
 
   constructor(config: DatabaseConfig) {
-    this.db = new Sequelize(config.name, config.user, config.password, {
+    this.sequelize = new Sequelize(config.name, config.user, config.password, {
       host: config.host,
       dialect: 'mariadb',
       timezone: '+08:00',
@@ -35,6 +37,11 @@ export class CourseDB {
         idle: 10000,
       },
     });
+    department.init(this);
+    college.init(this);
+    this.sequelize
+      .sync()
+      .then(() => DatabaseLogger.info('Database initialized!'));
   }
 
   async updateAll() {
