@@ -6,6 +6,24 @@ export enum Semester {
   FALL = 1,
 }
 
+export interface CourseData {
+  year: number;
+  semester: Semester;
+  serialNo: number;
+  classNo: string;
+  title: string;
+  credit: number;
+  passwordCard: string;
+  teachers: string[];
+  classTimes: string[];
+  limitCnt: number;
+  admitCnt: number;
+  waitCnt: number;
+  collegeId: string;
+  departmentId: string;
+  courseType: string;
+}
+
 export class Course extends Model {
   year: number;
   semester: Semester;
@@ -67,7 +85,7 @@ export function init(courseDB: CourseDB) {
       },
       collegeId: { type: DataTypes.STRING, allowNull: false },
       departmentId: { type: DataTypes.STRING, allowNull: false },
-      courseType: { type: DataTypes.STRING, allowNull: false },
+      courseType: { type: DataTypes.STRING, allowNull: true },
     },
     {
       sequelize: courseDB.sequelize,
