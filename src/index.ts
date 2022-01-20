@@ -15,4 +15,5 @@ const config: DatabaseConfig = {
   const courseDB = new CourseDB(config);
   await courseDB.sync();
   await courseDB.updateAll();
+  await courseDB.sequelize.close();
 })();

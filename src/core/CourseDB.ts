@@ -51,8 +51,8 @@ export class CourseDB {
   async updateAll() {
     const collegesToInsert: CollegeData[] = [];
     const departmentsToInsert: Department[] = [];
-    const coursesToInsert: ProcessedCourseBaseData[] = [];
-    const courseExtrasToInsert: ProcessedCourseExtraData[] = [];
+    const coursesBaseData: ProcessedCourseBaseData[] = [];
+    const courseExtrasData: ProcessedCourseExtraData[] = [];
 
     try {
       Logger.info('Start fetching all colleges...');
@@ -88,7 +88,7 @@ export class CourseDB {
           );
           Logger.info(`${courses.length} courses fetched.`);
 
-          coursesToInsert.push(...courses);
+          coursesBaseData.push(...courses);
         }
       }
 
@@ -96,11 +96,86 @@ export class CourseDB {
       const courseExtras = await fetchAllCourseExtras();
       Logger.info(`${courseExtras.length} course extras fetched.`);
 
-      courseExtrasToInsert.push(...courseExtras);
+      courseExtrasData.push(...courseExtras);
     } catch (e) {
       Logger.error('Encounter an error while fetching data:', e);
       process.exit(-1);
     }
-    Logger.info('Done!');
+    Logger.info('Fetch data completed!');
+
+    Logger.info('Start merging course data...');
+    const coursesToInsert: course.CourseData[] = coursesBaseData.map(
+      (courseBase) => {
+        const courseExtra = courseExtrasData.find(
+          (extra) => extra.serialNo === courseBase.serialNo,
+        );
+        return {
+          year: Number(process.env.YEAR),
+          semester: course.Semester[process.env.SEMESTER] as number,
+          ...courseExtra,
+          ...courseBase,
+        } as course.CourseData;
+      },
+    );
+
+    Logger.info('Merge course data completed!');
+
+    Logger.info('Start updating database...');
+    Logger.info('Start updating colleges...');
+    for (const collegeData of collegesToInsert) {
+      const [collegeInstance, created] = await college.College.findOrCreate({
+        where: { collegeId: collegeData.collegeId },
+        defaults: {
+          collegeName: collegeData.collegeName,
+        },
+      });
+      if (created) Logger.info(`College created: ${collegeData.collegeId}`);
+    }
+    Logger.info('Update colleges completed!');
+    Logger.info('Start updating departments...');
+    for (const departmentData of departmentsToInsert) {
+      const [departmentInstance, created] =
+        await department.Department.findOrCreate({
+          where: { departmentId: departmentData.departmentId },
+          defaults: {
+            departmentName: departmentData.departmentName,
+            collegeId: departmentData.collegeId,
+          },
+        });
+      if (created)
+        Logger.info(`Department created: ${departmentData.departmentId}`);
+    }
+    Logger.info('Update departments completed!');
+    Logger.info(
+      `Start updating courses of ${process.env.YEAR}-${process.env.SEMESTER}...`,
+    );
+    for (const courseData of coursesToInsert) {
+      const [courseInstance, created] = await course.Course.findOrCreate({
+        where: {
+          year: courseData.year,
+          semester: courseData.semester,
+          serialNo: courseData.serialNo,
+        },
+        defaults: {
+          classNo: courseData.classNo,
+          title: courseData.title,
+          credit: courseData.credit,
+          passwordCard: courseData.passwordCard,
+          teachers: JSON.stringify(courseData.teachers),
+          classTimes: JSON.stringify(courseData.classTimes),
+          limitCnt: courseData.limitCnt,
+          admitCnt: courseData.admitCnt,
+          waitCnt: courseData.waitCnt,
+          collegeId: courseData.collegeId,
+          departmentId: courseData.departmentId,
+          courseType: courseData.courseType,
+        },
+      });
+      if (created) Logger.info(`Course created: ${courseData.serialNo}`);
+    }
+    Logger.info(
+      `Update courses of ${process.env.YEAR}-${process.env.SEMESTER}completed!`,
+    );
+    Logger.info('Update database completed!');
   }
 }
