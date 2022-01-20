@@ -13,6 +13,7 @@ import {
 } from '../helpers/preprocess';
 import * as department from './models/Department';
 import * as college from './models/College';
+import * as course from './models/Course';
 
 export interface DatabaseConfig {
   host: string;
@@ -39,9 +40,12 @@ export class CourseDB {
     });
     department.init(this);
     college.init(this);
-    this.sequelize
-      .sync()
-      .then(() => DatabaseLogger.info('Database initialized!'));
+    course.init(this);
+  }
+
+  async sync() {
+    await this.sequelize.sync();
+    DatabaseLogger.info('Database initialized!');
   }
 
   async updateAll() {
