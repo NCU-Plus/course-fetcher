@@ -1,7 +1,7 @@
 {
   "name": "course-fetcher",
   "version": "0.0.0",
-  "description": "A script to get NCU course data from Course Schedule Planning System.",
+  "description": "This is a script to get course data from NCU Course Schedule Planning System, and update open api course database.",
   "main": "dist/index.js",
   "scripts": {
     "start": "node  ./dist/index.js",
