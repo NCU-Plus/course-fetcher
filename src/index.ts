@@ -4,10 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config: DatabaseConfig = {
-  host: process.env.HOST,
-  name: process.env.DATABASE,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  name: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
 };
 
 (async () => {

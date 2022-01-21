@@ -17,6 +17,7 @@ import * as course from './models/Course';
 
 export interface DatabaseConfig {
   host: string;
+  port: number;
   name: string;
   user: string;
   password: string;
@@ -28,6 +29,7 @@ export class CourseDB {
   constructor(config: DatabaseConfig) {
     this.sequelize = new Sequelize(config.name, config.user, config.password, {
       host: config.host,
+      port: config.port,
       dialect: 'mariadb',
       timezone: '+08:00',
       logging: (sql: string) => DatabaseLogger.info(sql),
