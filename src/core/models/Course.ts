@@ -76,7 +76,7 @@ export function init(courseDB: CourseDB) {
         allowNull: false,
       },
       admitCnt: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       waitCnt: {
