@@ -98,7 +98,7 @@ export async function fetchAllCourseExtras(): Promise<
       .get()
       .map((tr) => {
         const serialNo = $(tr).find('td:nth-child(1)').html().split('<br>')[0];
-        const courseType = $(tr).find('td:nth-child(7)').text().trim();
+        const courseType = $(tr).find('td:nth-child(6)').text().trim();
         return { serialNo, courseType };
       });
     result.push(...courseExtras);
