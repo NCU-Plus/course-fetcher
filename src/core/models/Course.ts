@@ -2,8 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import { CourseDB } from '../CourseDB';
 
 export enum Semester {
-  SPRING = 0,
-  FALL = 1,
+  FALL = 0,
+  SPRING = 1,
 }
 
 export interface CourseData {
